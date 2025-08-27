@@ -1,0 +1,36 @@
+---
+- name: Ensure cron is installed
+  yum:
+    name: cronie
+    state: present
+
+- name: Parse Restart tag (weekday + time)
+  set_fact:
+    restart_day: >-
+      {{ Restart | regex_search('(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)') }}
+    restart_time: >-
+      {{ Restart | regex_search('([0-9]{1,2}:[0-9]{2})|midnight|noon') }}
+
+- name: Normalize day
+  set_fact:
+    cron_day: >-
+      {{ restart_day | regex_replace('Sunday','Sun')
+                     | regex_replace('Monday','Mon')
+                     | regex_replace('Tuesday','Tue')
+                     | regex_replace('Wednesday','Wed')
+                     | regex_replace('Thursday','Thu')
+                     | regex_replace('Friday','Fri')
+                     | regex_replace('Saturday','Sat') }}
+
+- name: Normalize time
+  set_fact:
+    cron_hour: "{{ '0' if restart_time == 'midnight' else '12' if restart_time == 'noon' else (restart_time.split(':')[0]) }}"
+    cron_min: "{{ '0' if restart_time in ['midnight','noon'] else (restart_time.split(':')[1]) }}"
+
+- name: Create cron job for server restart
+  cron:
+    name: "Restart server"
+    minute: "{{ cron_min }}"
+    hour: "{{ cron_hour }}"
+    weekday: "{{ cron_day }}"
+    job: "/sbin/reboot"

@@ -1,0 +1,10 @@
+---
+- name: Manage AWS EC2 based on tags
+  hosts: aws
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - hostname
+    - service
+    - restart

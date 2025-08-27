@@ -1,0 +1,9 @@
+- name: Manage EC2 instances based on tags
+  hosts: tag_Managed_true
+  gather_facts: yes
+  roles:
+    - hostname
+- hosts: tag_Managed_true
+  roles:
+    - hostname
+    - service

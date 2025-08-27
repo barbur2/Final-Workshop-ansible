@@ -1,0 +1,6 @@
+- name: Manage hostnames for Managed EC2 instances
+  hosts: tag_Managed_true
+  become: true
+
+  roles:
+    - hostname

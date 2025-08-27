@@ -1,0 +1,26 @@
+---
+- name: Map service names to actual packages and service units
+  set_fact:
+    service_package: >-
+      {{ 'mariadb105' if Service == 'mysql'
+         else 'nginx' if Service == 'nginx'
+         else Service }}
+    service_unit: >-
+      {{ 'mariadb' if Service == 'mysql'
+         else 'nginx' if Service == 'nginx'
+         else Service }}
+
+- name: Install service package
+  yum:
+    name: "{{ service_package }}"
+    state: present
+
+- name: Ensure service is enabled and running
+  service:
+    name: "{{ service_unit }}"
+    enabled: yes
+    state: started
+
+- name: Debug service version (simulated handling)
+  debug:
+    msg: "Service {{ Service }} requested with version {{ Version }} (installed package: {{ service_package }}, service unit: {{ service_unit }})"
