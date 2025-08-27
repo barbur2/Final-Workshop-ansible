@@ -1,6 +1,0 @@
----
-- name: Test restart role
-  hosts: all
-  gather_facts: yes
-  roles:
-    - restart
