@@ -1,0 +1,15 @@
+plugin: aws_ec2
+regions:
+  - "us-east-1"
+filters:
+  instance-state-name: running
+  "tag:Managed_bar": "true"
+compose:
+  ansible_host: public_dns_name
+  ansible_user: ec2-user
+  ansible_ssh_private_key_file: ~/.ssh/new_bar_key.pem
+  Managed: tags.Managed_bar | default("false")
+  Name: tags.Name | default("")
+  Service: tags.Service | default("")
+  Version: tags.Version | default("latest")
+  Restart: tags.Restart | default("")

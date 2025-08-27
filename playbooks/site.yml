@@ -1,10 +1,10 @@
 ---
 - name: Manage AWS EC2 based on tags
-  hosts: aws
+  hosts: all
   gather_facts: yes
   become: yes
 
   roles:
-    - hostname
-    - service
-    - restart
+    - { role: hostname, when: Managed | bool }
+    - { role: service, when: Managed | bool }
+    - { role: restart, when: Managed | bool }
